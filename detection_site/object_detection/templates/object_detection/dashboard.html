@@ -1,21 +1,21 @@
 {% extends "object_detection/base.html" %}
 
 {% block content %}
-<h2>Dashboard</h2>
-<a href="{% url 'object_detection:add_image_feed' %}" class="btn btn-primary mb-3">Add Image</a>
+<h2>Приборная панель</h2>
+<a href="{% url 'object_detection:add_image_feed' %}" class="btn btn-primary mb-3">Добавить изображение</a>
 
 {% for feed in image_feeds %}
 <div class="card mb-3">
     <div class="card-header">
-        <a href="{% url 'object_detection:process_feed' feed.id %}" class="btn btn-secondary">Process Image</a>
+        <a href="{% url 'object_detection:process_feed' feed.id %}" class="btn btn-secondary">Изображение процесса</a>
     </div>
     <div class="card-body">
         <a href="{{ feed.image.url }}" target="_blank">
-            <img src="{{ feed.image.url }}" alt="Original Image" style="width: 50px; height: 50px;">
+            <img src="{{ feed.image.url }}" alt="Original Image" style="width: 100px; height: 100px;">
         </a>
         {% if feed.processed_image %}
         <a href="{{ feed.processed_image.url }}" target="_blank">
-            <img src="{{ feed.processed_image.url }}" alt="Processed Image" style="width: 50px; height: 50px;">
+            <img src="{{ feed.processed_image.url }}" alt="Processed Image" style="width: 100px; height: 100px;">
         </a>
         <ul>
             {% for obj in feed.detected_objects.all %}
@@ -26,7 +26,7 @@
     </div>
     <form action="{% url 'object_detection:delete_image' feed.id %}" method="post">
         {% csrf_token %}
-        <button type="submit">Delete</button>
+        <button type="submit">Удалить</button>
     </form>
 </div>
 {% endfor %}

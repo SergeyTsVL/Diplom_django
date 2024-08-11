@@ -72,3 +72,6 @@ def delete_image(request, image_id):
     image = get_object_or_404(ImageFeed, id=image_id, user=request.user)  # Ensuring only the owner can delete
     image.delete()
     return redirect('object_detection:dashboard')
+# python manage.py makemigrations
+# python manage.py sqlmigrate blog
+# python manage.py createsuperuser
