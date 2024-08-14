@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .models import ImageFeed
-from .utils import process_image
+from .utils import process_image, process_video
 from .forms import ImageFeedForm
 
 
@@ -57,7 +57,7 @@ def process_image_feed(request, feed_id):
 @login_required
 def process_video_feed(request, feed_id_vid):
     video_feed = get_object_or_404(ImageFeed, id=feed_id_vid, user=request.user)
-    process_image(feed_id_vid)  # Consider handling this asynchronously
+    process_video(feed_id_vid)  # Consider handling this asynchronously
     return redirect('object_detection:dashboard')
 
 
@@ -75,14 +75,26 @@ def add_image_feed(request):
     return render(request, 'object_detection/add_image_feed.html', {'form': form})
 
 @login_required
+def add_video_feed(request):
+    if request.method == 'POST':
+        form = ImageFeedForm(request.POST, request.FILES)
+        if form.is_valid():
+            video_feed = form.save(commit=False)
+            video_feed.user = request.user
+            video_feed.save()
+            return redirect('object_detection:dashboard')
+    else:
+        form = ImageFeedForm()
+    return render(request, 'object_detection/add_video_feed.html', {'form': form})
+
+@login_required
 def delete_image(request, image_id):
     image = get_object_or_404(ImageFeed, id=image_id, user=request.user)  # Ensuring only the owner can delete
     image.delete()
     return redirect('object_detection:dashboard')
+
 # python manage.py makemigrations
 # python manage.py sqlmigrate blog
 # python manage.py createsuperuser
 # cd detection_site
-# python manage.py makemigrations blog
-# python manage.py sqlmigrate blog 0001
-# python manage.py migrate
+# python manage.py runserver

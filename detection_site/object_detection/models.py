@@ -20,8 +20,8 @@ class DetectedObject(models.Model):
 
 class VideoFeed(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images/')
-    processed_image = models.ImageField(upload_to='processed_images/', null=True, blank=True)
+    video = models.ImageField(upload_to='video/')
+    processed_video = models.ImageField(upload_to='processed_video/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.image.name}"
