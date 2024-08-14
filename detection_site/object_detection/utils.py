@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from django.core.files.base import ContentFile
 from .models import ImageFeed, DetectedObject
+import time
 
 
 VOC_LABELS = [
@@ -25,7 +26,7 @@ def process_image(image_feed_id):
 
         img = cv2.imread(image_path)
         if img is None:
-            print("Failed to load image")
+            print("Не удалось загрузить изображение.")
             return False
 
         h, w = img.shape[:2]
@@ -60,5 +61,29 @@ def process_image(image_feed_id):
         return True
 
     except ImageFeed.DoesNotExist:
-        print("ImageFeed not found.")
+        print("Лента изображений не найдена.")
         return False
+
+def process_video():
+    source = cv2.VideoCapture(0)
+
+    while True:
+
+        # time.sleep(0.01)
+        ret, img = source.read()
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # img = cv2.Canny(img, 80, 100)
+        faces = cv2.CascadeClassifier('detection_site/media/haarcascade_profileface.xml')
+        results = faces.detectMultiScale(gray, scaleFactor=1.40, minNeighbors=3)
+
+        for (x, y, w, h) in results:  # x, y, w, h - размеры квадрата выделяющего лица
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), thickness=3)
+
+        cv2.imshow("Result", img)
+        key = cv2.waitKey(1)
+        if key == ord("q"):
+            break
+
+    cv2.destroyAllWindows()
+    source.release()

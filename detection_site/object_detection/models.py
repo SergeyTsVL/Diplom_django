@@ -17,3 +17,11 @@ class DetectedObject(models.Model):
 
     def __str__(self):
         return f"{self.object_type} ({self.confidence * 100}%) on {self.image_feed.image.name}"
+
+class VideoFeed(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images/')
+    processed_image = models.ImageField(upload_to='processed_images/', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.image.name}"
